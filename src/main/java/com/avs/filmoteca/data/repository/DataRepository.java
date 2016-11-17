@@ -2,9 +2,9 @@ package com.avs.filmoteca.data.repository;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.avs.filmoteca.data.db.DataBase;
@@ -37,12 +37,29 @@ public class DataRepository {
 		}
 	}
 
+	public List<String> getMovies() {
+		List<String> movieTitles = new ArrayList<String>();
+		try {
+			Statement stmt = sMySqlConnection.createStatement();
+			ResultSet resultSet = stmt.executeQuery("SELECT * FROM " + DataBase.TABLE_MOVIES);
+			while (resultSet.next())
+				movieTitles.add(resultSet.getString(DataBase.ROW_TITLE));
+			resultSet.close();
+			stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return movieTitles;
+	}
+
 	public void addMovies(List<String> movieTitles) {
 		for (String movieTitle : movieTitles) {
 			Statement stmt;
 			try {
 				stmt = sMySqlConnection.createStatement();
-				stmt.executeUpdate("INSERT INTO MovieTitle (title) values('" + movieTitle + "')");
+				stmt.executeUpdate("INSERT INTO " + DataBase.TABLE_MOVIES + " (" + DataBase.ROW_TITLE + ") values('"
+						+ movieTitle + "')");
 				stmt.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -51,8 +68,20 @@ public class DataRepository {
 		}
 	}
 
+	public void deleteMovies() {
+		try {
+			Statement stmt = sMySqlConnection.createStatement();
+			stmt.executeUpdate("DELETE FROM " + DataBase.TABLE_MOVIES);
+			stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public static void closeRepository() {
 		try {
+			sDataRepository = null;
 			if (sMySqlConnection != null)
 				sMySqlConnection.close();
 		} catch (SQLException e) {
