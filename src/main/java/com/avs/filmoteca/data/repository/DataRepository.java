@@ -37,6 +37,18 @@ public class DataRepository {
 		}
 	}
 
+	public void addPushRegistrationToken(String token) {
+		try {
+			Statement stmt = sMySqlConnection.createStatement();
+			stmt.executeUpdate("INSERT INTO " + DataBase.TABLE_REGISTRATION_TOKEN + " (" + DataBase.ROW_TOKEN
+					+ ") values('" + token + "')");
+			stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public List<String> getMovies() {
 		List<String> movieTitles = new ArrayList<String>();
 		try {

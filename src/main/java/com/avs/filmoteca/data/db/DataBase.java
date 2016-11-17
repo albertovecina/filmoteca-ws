@@ -9,7 +9,9 @@ public class DataBase {
 	public static final String DATABASE_NAME = "Filmoteca";
 	
 	public static final String TABLE_MOVIES = "MovieTitle";
-	public static final String ROW_TITLE = "title";
+	public static final String TABLE_REGISTRATION_TOKEN = "PushRegistrationToken";
 
+	public static final String ROW_TITLE = "title";
+	public static final String ROW_TOKEN = "token";
 
 }
