@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.avs.filmoteca.data.Charset;
 import com.avs.filmoteca.data.db.DataBase;
 import com.avs.filmoteca.data.repository.DataRepository;
 import com.google.gson.Gson;
@@ -42,6 +43,8 @@ public class Movies extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		response.setCharacterEncoding(Charset.UTF_8);
+		
 		List<String> movieTitles = DataRepository.getInstance().getMovies();
 		DataRepository.closeRepository();
 		response.getWriter().append(mGson.toJson(movieTitles));
