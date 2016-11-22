@@ -37,7 +37,7 @@ public class DataRepository {
 		}
 	}
 
-	public void addPushRegistrationToken(String token) {
+	public void addPushRegistrationId(String token) {
 		try {
 			Statement stmt = sMySqlConnection.createStatement();
 			stmt.executeUpdate("INSERT INTO " + DataBase.TABLE_REGISTRATION_TOKEN + " (" + DataBase.ROW_TOKEN
@@ -47,6 +47,22 @@ public class DataRepository {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public List<String> getPushRegistrationIds() {
+		List<String> registrationIds = new ArrayList<String>();
+		try {
+			Statement stmt = sMySqlConnection.createStatement();
+			ResultSet resultSet = stmt.executeQuery("SELECT * FROM " + DataBase.TABLE_REGISTRATION_TOKEN);
+			while (resultSet.next())
+				registrationIds.add(resultSet.getString(DataBase.ROW_TOKEN));
+			resultSet.close();
+			stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return registrationIds;
 	}
 
 	public List<String> getMovies() {
