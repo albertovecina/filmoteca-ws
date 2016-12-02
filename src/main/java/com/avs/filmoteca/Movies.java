@@ -15,14 +15,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.avs.filmoteca.data.Charset;
 import com.avs.filmoteca.data.db.DataBase;
+import com.avs.filmoteca.data.db.DataBase.Environment;
 import com.avs.filmoteca.data.repository.DataRepository;
+import com.avs.filmoteca.utils.RequestUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
  * Servlet implementation class Movies
  */
-@WebServlet("/movies")
+@WebServlet(urlPatterns = { "/dev/movies", "/movies" })
 public class Movies extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -44,8 +46,8 @@ public class Movies extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.setCharacterEncoding(Charset.UTF_8);
-		
-		List<String> movieTitles = DataRepository.getInstance().getMovies();
+
+		List<String> movieTitles = DataRepository.getInstance(RequestUtils.getEnvironment(request)).getMovies();
 		DataRepository.closeRepository();
 		response.getWriter().append(mGson.toJson(movieTitles));
 	}
@@ -61,9 +63,11 @@ public class Movies extends HttpServlet {
 		Type listType = new TypeToken<ArrayList<String>>() {
 		}.getType();
 
+		Environment environment = RequestUtils.getEnvironment(request);
+
 		List<String> moviesList = mGson.fromJson(jsonMovies, listType);
-		DataRepository.getInstance().deleteMovies();
-		DataRepository.getInstance().addMovies(moviesList);
+		DataRepository.getInstance(environment).deleteMovies();
+		DataRepository.getInstance(environment).addMovies(moviesList);
 		doGet(request, response);
 	}
 

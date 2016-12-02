@@ -17,9 +17,11 @@ public class DataRepository {
 	private MysqlDataSource mMySqlDataSource;
 	private static Connection sMySqlConnection;
 
-	public static DataRepository getInstance() {
+	public static DataRepository getInstance(DataBase.Environment environment) {
 		if (sDataRepository == null)
 			sDataRepository = new DataRepository();
+		sDataRepository.setEnvironment(environment);
+		sDataRepository.createDataBaseConnection();
 		return sDataRepository;
 	}
 
@@ -28,7 +30,13 @@ public class DataRepository {
 		mMySqlDataSource.setUser(DataBase.DATABASE_USER);
 		mMySqlDataSource.setPassword(DataBase.DATEBASE_PASSWORD);
 		mMySqlDataSource.setServerName(DataBase.DATABASE_SERVER_NAME);
-		mMySqlDataSource.setDatabaseName(DataBase.DATABASE_NAME);
+	}
+
+	private void setEnvironment(DataBase.Environment environment) {
+		mMySqlDataSource.setDatabaseName(environment.getDataBaseName());
+	}
+
+	private void createDataBaseConnection() {
 		try {
 			sMySqlConnection = mMySqlDataSource.getConnection();
 		} catch (SQLException e) {
@@ -48,7 +56,7 @@ public class DataRepository {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public List<String> getPushRegistrationIds() {
 		List<String> registrationIds = new ArrayList<String>();
 		try {
