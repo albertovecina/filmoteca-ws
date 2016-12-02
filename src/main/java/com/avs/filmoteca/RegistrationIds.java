@@ -9,14 +9,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.avs.filmoteca.data.db.DataBase.Environment;
 import com.avs.filmoteca.data.model.RegistrationToken;
 import com.avs.filmoteca.data.repository.DataRepository;
+import com.avs.filmoteca.utils.RequestUtils;
 import com.google.gson.Gson;
 
 /**
  * Servlet implementation class RegisterToken
  */
-@WebServlet("/registrationId")
+@WebServlet(urlPatterns = { "/dev/registrationId", "/registrationId" })
 public class RegistrationIds extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -35,9 +37,9 @@ public class RegistrationIds extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		List<String> registationIds = DataRepository.getInstance().getPushRegistrationIds();
+		List<String> registationIds = DataRepository.getInstance(RequestUtils.getEnvironment(request))
+				.getPushRegistrationIds();
 		DataRepository.closeRepository();
-		
 		response.getWriter().append(new Gson().toJson(registationIds));
 	}
 
@@ -48,7 +50,8 @@ public class RegistrationIds extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		DataRepository.getInstance().addPushRegistrationId(request.getParameter(RegistrationToken.QUERY_TOKEN));
+		DataRepository.getInstance(RequestUtils.getEnvironment(request))
+				.addPushRegistrationId(request.getParameter(RegistrationToken.QUERY_TOKEN));
 		DataRepository.closeRepository();
 	}
 
