@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: filmoteca.ws
+---
+testFramework: spek
+sourceLanguage: kotlin
