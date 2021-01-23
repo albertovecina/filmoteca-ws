@@ -1,0 +1,4 @@
+package filmoteca
+
+class TokenAuthenticationProvider {
+}

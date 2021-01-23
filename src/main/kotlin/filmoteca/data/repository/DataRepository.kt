@@ -101,7 +101,7 @@ class DataRepository private constructor() {
         addMovies(movieTitles)
     }
 
-    fun addMovies(movieTitles: List<String>) {
+    private fun addMovies(movieTitles: List<String>) {
         for (movieTitle in movieTitles) {
             val statement: Statement
             try {
@@ -116,7 +116,7 @@ class DataRepository private constructor() {
         }
     }
 
-    fun deleteMovies() {
+    private fun deleteMovies() {
         try {
             val statement = mySqlConnection.createStatement()
             statement.executeUpdate("DELETE FROM " + DataBase.TABLE_MOVIES)

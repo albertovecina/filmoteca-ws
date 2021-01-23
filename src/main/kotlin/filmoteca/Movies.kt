@@ -16,14 +16,14 @@ class Movies {
     private val gson = Gson()
 
     @Get(produces = [MediaType.APPLICATION_JSON])
-    public fun doGet(env: String?): String {
+    fun doGet(env: String?): String {
         val movieTitles = DataRepository.getInstance(RequestUtils.getEnvironment(env)).getMovies()
         DataRepository.closeRepository()
         return gson.toJson(movieTitles)
     }
 
     @Post(produces = [MediaType.APPLICATION_JSON])
-    public fun doPost(env: String?, @Body movies: List<String>): String {
+    fun doPost(env: String?, @Body movies: List<String>): String {
         val environment = RequestUtils.getEnvironment(env)
         DataRepository.getInstance(environment).setMovies(movies)
         return doGet(env)
