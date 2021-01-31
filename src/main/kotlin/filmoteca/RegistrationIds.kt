@@ -10,22 +10,25 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.QueryValue
+import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Controller("/${Endpoint.ENDPOINT}/{env}/registrationId")
 class RegistrationIds {
 
     @Get(produces = [MediaType.APPLICATION_JSON])
-    public fun doGet(env: String): String {
+    fun doGet(env: String): String {
         val registrationIds = DataRepository.getInstance(RequestUtils.getEnvironment(env))
-                .getPushRegistrationIds()
+            .getPushRegistrationIds()
         DataRepository.closeRepository()
         return Gson().toJson(registrationIds)
     }
 
     @Post
-    public fun doPost(env: String, @QueryValue token: String) {
+    fun doPost(env: String, @QueryValue token: String) {
         DataRepository.getInstance(RequestUtils.getEnvironment(env))
-                .addPushRegistrationId(token)
+            .addPushRegistrationId(token)
         DataRepository.closeRepository()
     }
 

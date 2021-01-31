@@ -3,3 +3,8 @@ micronaut:
     name: filmoteca-ws
   server:
     port: 7070
+  security:
+    enabled: true
+    endpoints:
+      login:
+        enabled: true
