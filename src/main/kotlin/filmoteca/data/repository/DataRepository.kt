@@ -21,7 +21,7 @@ class DataRepository private constructor() {
         }
 
         fun closeRepository() =
-                dataRepository.closeDataBaseConnection()
+            dataRepository.closeDataBaseConnection()
 
     }
 
@@ -52,13 +52,16 @@ class DataRepository private constructor() {
         }
     }
 
-    fun getPushRegistrationIds(): List<String> {
+    fun getPushRegistrationIds(region: String): List<String> {
         val registrationIds = ArrayList<String>()
         try {
             val statement = mySqlConnection.createStatement()
-            val resultSet = statement.executeQuery("SELECT * FROM " + DataBase.TABLE_REGISTRATION_TOKEN)
+            val resultSet = statement.executeQuery(
+                "SELECT * FROM ${DataBase.TABLE_REGISTRATION_TOKEN}" +
+                        " WHERE ${DataBase.COL_REGION}='${region}'"
+            )
             while (resultSet.next())
-                registrationIds.add(resultSet.getString(DataBase.ROW_TOKEN))
+                registrationIds.add(resultSet.getString(DataBase.COL_TOKEN))
             resultSet.close()
             statement.close()
         } catch (e: SQLException) {
@@ -68,11 +71,13 @@ class DataRepository private constructor() {
         return registrationIds
     }
 
-    fun addPushRegistrationId(token: String) {
+    fun addPushRegistrationId(token: String, region: String) {
         try {
             val statement = mySqlConnection.createStatement()
-            statement.executeUpdate("INSERT INTO " + DataBase.TABLE_REGISTRATION_TOKEN + " (" + DataBase.ROW_TOKEN
-                    + ") values('" + token + "')")
+            statement.executeUpdate(
+                "INSERT INTO " + DataBase.TABLE_REGISTRATION_TOKEN +
+                        " (${DataBase.COL_TOKEN},${DataBase.COL_REGION}) values('$token','$region')"
+            )
             statement.close()
         } catch (e: SQLException) {
             e.printStackTrace()
@@ -80,13 +85,16 @@ class DataRepository private constructor() {
 
     }
 
-    fun getMovies(): List<String> {
+    fun getMovies(region: String): List<String> {
         val movieTitles = ArrayList<String>()
         try {
             val stmt = mySqlConnection.createStatement()
-            val resultSet = stmt.executeQuery("SELECT * FROM " + DataBase.TABLE_MOVIES)
+            val resultSet = stmt.executeQuery(
+                "SELECT * FROM ${DataBase.TABLE_MOVIES}" +
+                        " WHERE ${DataBase.COL_REGION}='${region}'"
+            )
             while (resultSet.next())
-                movieTitles.add(resultSet.getString(DataBase.ROW_TITLE))
+                movieTitles.add(resultSet.getString(DataBase.COL_TITLE))
             resultSet.close()
             stmt.close()
         } catch (e: SQLException) {
@@ -96,18 +104,20 @@ class DataRepository private constructor() {
         return movieTitles
     }
 
-    fun setMovies(movieTitles: List<String>) {
-        deleteMovies()
-        addMovies(movieTitles)
+    fun setMovies(movieTitles: List<String>, region: String) {
+        deleteMovies(region)
+        addMovies(movieTitles, region)
     }
 
-    private fun addMovies(movieTitles: List<String>) {
+    private fun addMovies(movieTitles: List<String>, region: String) {
         for (movieTitle in movieTitles) {
             val statement: Statement
             try {
                 statement = mySqlConnection.createStatement()
-                statement.executeUpdate("INSERT INTO " + DataBase.TABLE_MOVIES + " (" + DataBase.ROW_TITLE + ") values('"
-                        + movieTitle + "')")
+                statement.executeUpdate(
+                    "INSERT INTO ${DataBase.TABLE_MOVIES} (${DataBase.COL_TITLE},${DataBase.COL_REGION}) " +
+                            "values('$movieTitle','$region')"
+                )
                 statement.close()
             } catch (e: SQLException) {
                 e.printStackTrace()
@@ -116,10 +126,13 @@ class DataRepository private constructor() {
         }
     }
 
-    private fun deleteMovies() {
+    private fun deleteMovies(region: String) {
         try {
             val statement = mySqlConnection.createStatement()
-            statement.executeUpdate("DELETE FROM " + DataBase.TABLE_MOVIES)
+            statement.executeUpdate(
+                "DELETE FROM ${DataBase.TABLE_MOVIES}" +
+                        " WHERE ${DataBase.COL_REGION}='${region}'"
+            )
             statement.close()
         } catch (e: SQLException) {
             e.printStackTrace()

@@ -18,17 +18,23 @@ import io.micronaut.security.rules.SecurityRule
 class RegistrationIds {
 
     @Get(produces = [MediaType.APPLICATION_JSON])
-    fun doGet(env: String): String {
+    fun doGet(
+        env: String,
+        @QueryValue(QueryParameter.REGION, defaultValue = QueryParameter.REGION_DEFAULT) region: String
+    ): String {
         val registrationIds = DataRepository.getInstance(RequestUtils.getEnvironment(env))
-            .getPushRegistrationIds()
+            .getPushRegistrationIds(region)
         DataRepository.closeRepository()
         return Gson().toJson(registrationIds)
     }
 
     @Post
-    fun doPost(env: String, @QueryValue token: String) {
+    fun doPost(
+        env: String, @QueryValue token: String,
+        @QueryValue(QueryParameter.REGION, defaultValue = QueryParameter.REGION_DEFAULT) region: String
+    ) {
         DataRepository.getInstance(RequestUtils.getEnvironment(env))
-            .addPushRegistrationId(token)
+            .addPushRegistrationId(token, region)
         DataRepository.closeRepository()
     }
 

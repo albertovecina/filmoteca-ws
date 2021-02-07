@@ -5,10 +5,7 @@ import filmoteca.data.Endpoint
 import filmoteca.data.repository.DataRepository
 import filmoteca.utils.RequestUtils
 import io.micronaut.http.MediaType
-import io.micronaut.http.annotation.Body
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.*
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
 
@@ -19,17 +16,24 @@ class Movies {
     private val gson = Gson()
 
     @Get(produces = [MediaType.APPLICATION_JSON])
-    fun doGet(env: String?): String {
-        val movieTitles = DataRepository.getInstance(RequestUtils.getEnvironment(env)).getMovies()
+    fun doGet(
+        env: String?,
+        @QueryValue(QueryParameter.REGION, defaultValue = QueryParameter.REGION_DEFAULT) region: String
+    ): String {
+        val movieTitles = DataRepository.getInstance(RequestUtils.getEnvironment(env)).getMovies(region)
         DataRepository.closeRepository()
         return gson.toJson(movieTitles)
     }
 
     @Post(produces = [MediaType.APPLICATION_JSON])
-    fun doPost(env: String?, @Body movies: List<String>): String {
+    fun doPost(
+        env: String?,
+        @QueryValue(QueryParameter.REGION, defaultValue = QueryParameter.REGION_DEFAULT) region: String,
+        @Body movies: List<String>
+    ): String {
         val environment = RequestUtils.getEnvironment(env)
-        DataRepository.getInstance(environment).setMovies(movies)
-        return doGet(env)
+        DataRepository.getInstance(environment).setMovies(movies, region)
+        return doGet(env, region)
     }
 
 }
