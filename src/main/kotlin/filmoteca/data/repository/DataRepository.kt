@@ -29,6 +29,7 @@ class DataRepository private constructor() {
         user = DataBase.DATABASE_USER
         password = DataBase.DATEBASE_PASSWORD
         serverName = DataBase.DATABASE_SERVER_NAME
+        serverTimezone = TimeZone.getDefault().id
     }
 
     private fun setEnvironment(environment: DataBase.Environment) {
@@ -37,7 +38,6 @@ class DataRepository private constructor() {
 
     private fun createDataBaseConnection() {
         try {
-            mySqlDataSource.serverTimezone = TimeZone.getDefault().id
             mySqlConnection = mySqlDataSource.connection
         } catch (e: SQLException) {
             e.printStackTrace()
