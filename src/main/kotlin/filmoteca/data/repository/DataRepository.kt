@@ -37,6 +37,7 @@ class DataRepository private constructor() {
 
     private fun createDataBaseConnection() {
         try {
+            mySqlDataSource.serverTimezone = TimeZone.getDefault().id
             mySqlConnection = mySqlDataSource.connection
         } catch (e: SQLException) {
             e.printStackTrace()
